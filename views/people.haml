@@ -1,0 +1,21 @@
+%h2 People
+%table
+  %thead
+    %tr
+      %th Name
+      %th Balance
+  %tbody
+    - @people.each do |person|
+      %tr
+        %td= person.name
+        %td= person.balance
+
+%br
+
+%strong Add New Person
+%form(action="/people" method="POST")
+  %input(type="text" placeholder="Name" name="name")
+  %button(type="submit") Submit
+
+%br
+%a(href="/" title="Index") Back

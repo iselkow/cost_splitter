@@ -1,0 +1,27 @@
+%h2 Expenses
+%table
+  %thead
+    %tr
+      %th Item
+      %th Cost
+      %th Purchased By
+  %tbody
+    - @expenses.each do |expense|
+      %tr
+        %td= expense.item
+        %td= expense.cost
+        %td= expense.person
+
+%br
+
+%strong Add New Expense
+%form(action="/expenses" method="POST")
+  %input(type="text" placeholder="Item" name="item")
+  %input(type="text" placeholder="Cost" name="cost")
+  %select(name="person_id")
+    - @people.each do |person|
+      %option{ value: person.id}= person.name
+  %button(type="submit") Submit
+
+%br
+%a(href="/" title="Index") Back

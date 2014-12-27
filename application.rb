@@ -13,7 +13,7 @@ class Person
   has n, :person_expense_records
 
   def balance
-    "--"
+    BalanceCalculator.call[id]
   end
 
   def to_s
@@ -32,10 +32,6 @@ class Expense
   has n, :people, through: :person_expense_records
   belongs_to :person
 
-  def as_currency
-    "$" + sprintf("%.2f", cost)
-  end
-
   def user_list
     people.map {|x| x.name }.join(", ")
   end
@@ -48,6 +44,42 @@ class PersonExpenseRecord
 
   belongs_to :expense
   belongs_to :person
+end
+
+class BalanceCalculator
+  def self.call
+    balances = {}
+
+    # Set default balance to 0
+    Person.each { |person| balances[person.id] = 0 }
+
+    # Iterate over each expense
+    Expense.each do |expense|
+
+      # Increase the balance by the total cost for the purchaser
+      purchaser_id = expense.person_id
+      balances[purchaser_id] += expense.cost
+
+      # Collect the number of non-purchaser users
+      payer_list = expense.people.map { |person| person.id }
+      payer_list.delete_if { |x| x == purchaser_id }
+      payer_count = payer_list.length
+
+      # Calculate share per user
+      share_per_user = expense.cost / payer_count
+
+      # Update balance for each user
+      payer_list.each { |payer_id| balances[payer_id] -= share_per_user }
+    end
+
+    balances
+  end
+end
+
+helpers do
+  def display_as_currency(decimal)
+    "$" + sprintf("%.2f", decimal)
+  end
 end
 
 DataMapper.finalize.auto_upgrade!

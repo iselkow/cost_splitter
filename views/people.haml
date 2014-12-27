@@ -8,7 +8,7 @@
     - @people.each do |person|
       %tr
         %td= person.name
-        %td= person.balance
+        %td= display_as_currency person.balance
 
 %br
 

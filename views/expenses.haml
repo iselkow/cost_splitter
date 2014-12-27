@@ -10,7 +10,7 @@
     - @expenses.each do |expense|
       %tr
         %td= expense.item
-        %td= expense.as_currency
+        %td= display_as_currency expense.cost
         %td= expense.person
         %td= expense.user_list
 

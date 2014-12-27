@@ -4,17 +4,23 @@
     %tr
       %th Name
       %th Balance
+      %th
   %tbody
     - @people.each do |person|
       %tr
         %td= person.name
         %td= display_as_currency person.balance
+        %td
+          %a(href="/people/#{person.id}/edit" title="Edit") Edit
 
 %br
 
 %strong Add New Person
 %form(action="/people" method="POST")
-  %input(type="text" placeholder="Name" name="name")
+  %dl
+    %dt Name
+    %dd
+      %input(type="text" placeholder="Name" name="name")
   %button(type="submit") Submit
 
 %br

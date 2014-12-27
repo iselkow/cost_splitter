@@ -93,6 +93,18 @@ get '/people' do
   haml :people
 end
 
+get '/people/:id/edit' do
+  @person = Person.get(params[:id])
+  haml :edit_person
+end
+
+post '/people/:id/edit' do
+  @person = Person.get(params[:id])
+  @person.update(name: params[:name])
+
+  redirect '/people'
+end
+
 post '/people' do
   Person.create(name: params[:name])
   redirect '/people'

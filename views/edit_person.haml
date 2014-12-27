@@ -1,0 +1,10 @@
+%h2= "Edit #{@person.name}"
+%form(action="/people/#{@person.id}/edit" method="POST")
+  %dl
+    %dt Name
+    %dd
+      %input{type: "text", placeholder: @person.name, name: "name"}
+  %button(type="submit") Update Person
+
+%br
+%a(href="/people" title="People") Back

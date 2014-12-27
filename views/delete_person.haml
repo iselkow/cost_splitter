@@ -1,0 +1,12 @@
+%form(action="/people/#{@person.id}/delete" method="POST")
+  %p= "The following expenses were purchased by this person. Please choose a new purchaser or delete the expense" if @person_expenses.any?
+  %dl
+  - @person_expenses.each do |expense|
+    %dt= expense.item
+    %dd
+      %select(name="expense_#{expense.id}")
+        - @other_people_array.each do |other_person|
+          %option{ value: other_person[0] }= other_person[1]
+  %p= "Are you sure you want to delete #{@person.name}?"
+  %button(type="submit" name="ok") OK
+  %button(type="submit" name="cancel") Cancel

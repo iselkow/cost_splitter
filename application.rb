@@ -19,6 +19,27 @@ class Person
   def to_s
     name
   end
+
+  def delete(expense_params)
+    # reassign expenses
+    expense_params.each do |k,v|
+      expense_id = k.split('_')[1]
+      expense = Expense.get(expense_id)
+
+      if v == 'delete'
+        expense.person_expense_records.destroy!
+        expense.destroy!
+      else
+        expense.update!(person_id: v)
+      end
+    end
+
+    # destroy person_expense_records
+    person_expense_records.destroy!
+
+    # destroy person
+    destroy!
+  end
 end
 
 class Expense
@@ -101,6 +122,27 @@ end
 post '/people/:id/edit' do
   @person = Person.get(params[:id])
   @person.update(name: params[:name])
+
+  redirect '/people'
+end
+
+get '/people/:id/delete' do
+  person_id = params[:id]
+  @person = Person.get(person_id)
+  @person_expenses = Expense.all(person_id: person_id)
+  other_people = Person.all.delete_if { |p| p == @person }
+  @other_people_array = other_people.map { |p| [p.id, p.name] }
+  @other_people_array.push(["delete", "Delete Expense"])
+
+  haml :delete_person
+end
+
+post '/people/:id/delete' do
+  if params.has_key?("ok")
+    person = Person.get(params[:id])
+    expense_params = params.select { |k,v| k =~ /expense_\d*/ }
+    person.delete(expense_params)
+  end
 
   redirect '/people'
 end

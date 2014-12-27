@@ -25,11 +25,20 @@ class Expense
   include DataMapper::Resource
 
   property :id, Serial
-  property :cost, Decimal
+  property :cost, Decimal, precision: 8, scale: 2
   property :item, String
 
   has n, :person_expense_records
+  has n, :people, through: :person_expense_records
   belongs_to :person
+
+  def as_currency
+    "$" + sprintf("%.2f", cost)
+  end
+
+  def user_list
+    people.map {|x| x.name }.join(", ")
+  end
 end
 
 class PersonExpenseRecord
@@ -64,6 +73,11 @@ get '/expenses' do
 end
 
 post '/expenses' do
-  Expense.create(cost: params[:cost], item: params[:item], person_id: params[:person_id])
+  expense = Expense.create(cost: params[:cost], item: params[:item], person_id: params[:person_id])
+
+  params[:person_expense_record].each do |person_id|
+    PersonExpenseRecord.create(person_id: person_id, expense_id: expense.id)
+  end
+
   redirect '/expenses'
 end

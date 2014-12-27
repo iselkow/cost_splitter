@@ -5,22 +5,36 @@
       %th Item
       %th Cost
       %th Purchased By
+      %th Users
   %tbody
     - @expenses.each do |expense|
       %tr
         %td= expense.item
-        %td= expense.cost
+        %td= expense.as_currency
         %td= expense.person
+        %td= expense.user_list
 
 %br
 
 %strong Add New Expense
 %form(action="/expenses" method="POST")
-  %input(type="text" placeholder="Item" name="item")
-  %input(type="text" placeholder="Cost" name="cost")
-  %select(name="person_id")
-    - @people.each do |person|
-      %option{ value: person.id}= person.name
+  %dl
+    %dt Item
+    %dd
+      %input(type="text" placeholder="Item" name="item")
+    %dt Cost
+    %dd
+      %input(type="text" placeholder="Cost" name="cost")
+    %dt Purchaser
+    %dd
+      %select(name="person_id")
+        - @people.each do |person|
+          %option{ value: person.id}= person.name
+    %dt People sharing expense
+    %dd
+      - @people.each do |person|
+        %input{ type: "checkbox", name: "person_expense_record[]", value: person.id}= person.name
+        %br
   %button(type="submit") Submit
 
 %br

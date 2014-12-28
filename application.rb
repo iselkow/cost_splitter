@@ -56,6 +56,18 @@ class Expense
   def user_list
     people.map {|x| x.name }.join(", ")
   end
+
+  def person_id_array
+    people.map { |x| x.id }
+  end
+
+  def delete
+    # destroy person_expense_records
+    person_expense_records.destroy!
+
+    # destroy expense
+    destroy!
+  end
 end
 
 class PersonExpenseRecord
@@ -118,6 +130,11 @@ get '/people' do
   haml :people
 end
 
+post '/people' do
+  Person.create(name: params[:name])
+  redirect '/people'
+end
+
 get '/people/:id/edit' do
   @person = Person.get(params[:id])
   haml :edit_person
@@ -163,6 +180,43 @@ post '/expenses' do
 
   params[:person_expense_record].each do |person_id|
     PersonExpenseRecord.create(person_id: person_id, expense_id: expense.id)
+  end
+
+  redirect '/expenses'
+end
+
+get '/expenses/:id/edit' do
+  @expense = Expense.get(params[:id])
+  @people = Person.all
+  @people_sharing_expense = @expense.person_id_array
+
+  haml :edit_expense
+end
+
+post '/expenses/:id/edit' do
+  @expense = Expense.get(params[:id])
+  @expense.update(cost: strip_currency(params[:cost]), item: params[:item], person_id: params[:person_id])
+
+  @expense.person_expense_records.destroy!
+
+  params[:person_expense_record].each do |person_id|
+    PersonExpenseRecord.create(person_id: person_id, expense_id: @expense.id)
+  end
+
+  redirect '/expenses'
+end
+
+get '/expenses/:id/delete' do
+  expense_id = params[:id]
+  @expense = Expense.get(expense_id)
+
+  haml :delete_expense
+end
+
+post '/expenses/:id/delete' do
+  if params.has_key?("ok")
+    expense = Expense.get(params[:id])
+    expense.delete
   end
 
   redirect '/expenses'

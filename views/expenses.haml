@@ -6,6 +6,7 @@
       %th Cost
       %th Purchased By
       %th Users
+      %th
   %tbody
     - @expenses.each do |expense|
       %tr
@@ -13,6 +14,9 @@
         %td= display_as_currency expense.cost
         %td= expense.person
         %td= expense.user_list
+        %td
+          %a(href="/expenses/#{expense.id}/edit" title="Edit") Edit
+          %a(href="/expenses/#{expense.id}/delete" title="Delete") Delete
 
 %br
 

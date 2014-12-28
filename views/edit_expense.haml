@@ -1,0 +1,23 @@
+%h2= "Edit #{@expense.item}"
+%form(action="/expenses/#{@expense.id}/edit" method="POST")
+  %dl
+    %dt Item
+    %dd
+      %input{type: "text", value: @expense.item, name: "item"}
+    %dt Cost
+    %dd
+      %input{type: "text", value: display_as_currency(@expense.cost), name: "cost"}
+    %dt Purchaser
+    %dd
+      %select(name="person_id")
+        - @people.each do |person|
+          %option{ value: person.id, selected: @expense.person_id == person.id }= person.name
+    %dt People sharing expense
+    %dd
+      - @people.each do |person|
+        %input{ type: "checkbox", name: "person_expense_record[]", value: person.id, checked: @people_sharing_expense.include?(person.id) }= person.name
+        %br
+  %button(type="submit") Update Expense
+
+%br
+%a(href="/people" title="People") Back

@@ -1,0 +1,4 @@
+%form(action="/expenses/#{@expense.id}/delete" method="POST")
+  %p= "Are you sure you want to delete #{@expense.item}?"
+  %button(type="submit" name="ok") OK
+  %button(type="submit" name="cancel") Cancel

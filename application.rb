@@ -93,9 +93,8 @@ class BalanceCalculator
       purchaser_id = expense.person_id
       balances[purchaser_id] += expense.cost
 
-      # Collect the number of non-purchaser users
+      # Collect the number of users
       payer_list = expense.people.map { |person| person.id }
-      payer_list.delete_if { |x| x == purchaser_id }
       payer_count = payer_list.length
 
       # Calculate share per user

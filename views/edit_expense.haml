@@ -14,8 +14,10 @@
           %option{ value: person.id, selected: @expense.person_id == person.id }= person.name
     %dt People sharing expense
     %dd
+      %input{ type: "checkbox", id: "select_all" } Check/Uncheck All
+      %br
       - @people.each do |person|
-        %input{ type: "checkbox", name: "person_expense_record[]", value: person.id, checked: @people_sharing_expense.include?(person.id) }= person.name
+        %input{ type: "checkbox", class: "checkbox", name: "person_expense_record[]", value: person.id, checked: @people_sharing_expense.include?(person.id) }= person.name
         %br
   %button(type="submit") Update Expense
 

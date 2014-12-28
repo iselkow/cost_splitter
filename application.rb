@@ -98,6 +98,10 @@ class BalanceCalculator
 end
 
 helpers do
+  def strip_currency(str)
+    str.gsub(/[^0-9|.]/, '')
+  end
+
   def display_as_currency(decimal)
     "$" + sprintf("%.2f", decimal)
   end
@@ -147,19 +151,15 @@ post '/people/:id/delete' do
   redirect '/people'
 end
 
-post '/people' do
-  Person.create(name: params[:name])
-  redirect '/people'
-end
-
 get '/expenses' do
   @expenses = Expense.all
   @people = Person.all
+
   haml :expenses
 end
 
 post '/expenses' do
-  expense = Expense.create(cost: params[:cost], item: params[:item], person_id: params[:person_id])
+  expense = Expense.create(cost: strip_currency(params[:cost]), item: params[:item], person_id: params[:person_id])
 
   params[:person_expense_record].each do |person_id|
     PersonExpenseRecord.create(person_id: person_id, expense_id: expense.id)

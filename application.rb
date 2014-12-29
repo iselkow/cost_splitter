@@ -9,8 +9,10 @@ class Person
 
   property :id, Serial
   property :name, String
+  property :paid, Boolean, default: false
 
   has n, :person_expense_records
+  has n, :expenses, through: :person_expense_records
 
   def balance
     BalanceCalculator.call[id]
@@ -40,6 +42,18 @@ class Person
     # destroy person
     destroy!
   end
+
+  def expense_list
+    expenses.map {|x| x.item}.join(", ")
+  end
+
+  def row_color
+    if paid
+      "success"
+    elsif balance < 0
+      "danger"
+    end
+  end
 end
 
 class Expense
@@ -52,6 +66,10 @@ class Expense
   has n, :person_expense_records
   has n, :people, through: :person_expense_records
   belongs_to :person
+
+  def purchaser
+    Person.first(id: person_id).name
+  end
 
   def user_list
     people.map {|x| x.name }.join(", ")
@@ -121,7 +139,7 @@ end
 DataMapper.finalize.auto_upgrade!
 
 get '/' do
-  haml :index
+  redirect '/people'
 end
 
 get '/people' do
@@ -163,6 +181,13 @@ post '/people/:id/delete' do
     expense_params = params.select { |k,v| k =~ /expense_\d*/ }
     person.delete(expense_params)
   end
+
+  redirect '/people'
+end
+
+post '/people/:id/mark_as_paid' do
+  person = Person.get(params[:id])
+  person.update(paid: true)
 
   redirect '/people'
 end

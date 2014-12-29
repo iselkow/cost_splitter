@@ -1,28 +1,37 @@
 %h2 People
-%table
+%table(class="table")
   %thead
     %tr
       %th Name
       %th Balance
-      %th
+      %th Items Used
+      %th Paid?
+      %th Edit
+      %th Delete
   %tbody
     - @people.each do |person|
-      %tr
+      %tr{ class: person.row_color }
         %td= person.name
         %td= display_as_currency person.balance
+        %td= person.expense_list
         %td
-          %a(href="/people/#{person.id}/edit" title="Edit") Edit
-          %a(href="/people/#{person.id}/delete" title="Delete") Delete
+          - if person.paid
+            Paid
+          - else
+            %form{ action: "/people/#{person.id}/mark_as_paid", method: "POST" }
+              %button(type="submit") Mark as Paid
+        %td
+          %a(href="/people/#{person.id}/edit" title="Edit")
+            %span(class="glyphicon glyphicon-pencil")
+        %td
+          %a(href="/people/#{person.id}/delete" title="Delete")
+            %span(class="glyphicon glyphicon-remove")
 
 %br
 
-%strong Add New Person
+%h2 Add New Person
 %form(action="/people" method="POST")
-  %dl
-    %dt Name
-    %dd
-      %input(type="text" placeholder="Name" name="name")
+  %div(class="form-group")
+    %label(for="name") Name
+    %input(type="text" class="form-control" placeholder="Name" id="name" name="name")
   %button(type="submit") Submit
-
-%br
-%a(href="/" title="Index") Back

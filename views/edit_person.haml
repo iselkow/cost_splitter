@@ -1,9 +1,8 @@
 %h2= "Edit #{@person.name}"
 %form(action="/people/#{@person.id}/edit" method="POST")
-  %dl
-    %dt Name
-    %dd
-      %input{type: "text", value: @person.name, name: "name"}
+  %div(class="form-group")
+    %label(for="name") Name
+    %input{type: "text", value: @person.name, name: "name", id: "name", class: "form-control"}
   %button(type="submit") Update Person
 
 %br

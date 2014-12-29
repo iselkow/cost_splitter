@@ -1,46 +1,51 @@
 %h2 Expenses
-%table
+%table(class="table")
   %thead
     %tr
       %th Item
       %th Cost
-      %th Purchased By
+      %th Purchaser
       %th Users
-      %th
+      %th Edit
+      %th Delete
   %tbody
     - @expenses.each do |expense|
       %tr
         %td= expense.item
         %td= display_as_currency expense.cost
-        %td= expense.person
+        %td= expense.purchaser
         %td= expense.user_list
         %td
-          %a(href="/expenses/#{expense.id}/edit" title="Edit") Edit
-          %a(href="/expenses/#{expense.id}/delete" title="Delete") Delete
+          %a(href="/expenses/#{expense.id}/edit" title="Edit")
+            %span(class="glyphicon glyphicon-pencil")
+        %td
+          %a(href="/expenses/#{expense.id}/delete" title="Delete")
+            %span(class="glyphicon glyphicon-remove")
 
 %br
 
-%strong Add New Expense
+%h2 Add New Expense
 %form(action="/expenses" method="POST")
-  %dl
-    %dt Item
-    %dd
-      %input(type="text" placeholder="Item" name="item")
-    %dt Cost
-    %dd
-      %input(type="text" placeholder="Cost" name="cost")
-    %dt Purchaser
-    %dd
-      %select(name="person_id")
-        - @people.each do |person|
-          %option{ value: person.id}= person.name
-    %dt People sharing expense
-    %dd
-      %input{ type: "checkbox", id: "select_all" } Check/Uncheck All
-      %br
+  %div(class="form-group")
+    %label(for="item") Item
+    %input(type="text" class="form-control" id="item" placeholder="Item" name="item")
+  %div(class="form-group")
+    %label(for="cost") Cost
+    %input(type="text" class="form-control" id="cost" placeholder="Cost" name="cost")
+  %div(class="form-group")
+    %label(for="purchaser") Purchaser
+    %select(name="person_id" id="purchaser" class="form-control")
       - @people.each do |person|
-        %input{ type: "checkbox", class: "checkbox", name: "person_expense_record[]", value: person.id}= person.name
-        %br
+        %option{ value: person.id}= person.name
+  %div(class="form-group")
+    %label People sharing expense
+    %div(class="checkbox")
+      %label(for="select_all")
+        %input{ type: "checkbox", id: "select_all" } Check/Uncheck All
+    - @people.each do |person|
+      %div(class="checkbox")
+        %label{ for: person.id }
+          %input{ type: "checkbox", id: person.id, class: "checkbox_item", name: "person_expense_record[]", value: person.id}= person.name
   %button(type="submit") Submit
 
 %br

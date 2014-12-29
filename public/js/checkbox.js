@@ -1,11 +1,11 @@
 $(document).ready(function() {
   $('#select_all').click(function(event) {
     if(this.checked) {
-      $('.checkbox').each(function() {
+      $('.checkbox_item').each(function() {
         this.checked = true;
       });
     } else {
-      $('.checkbox').each(function() {
+      $('.checkbox_item').each(function() {
         this.checked = false;
       });
     };
